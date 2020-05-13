@@ -1,0 +1,88 @@
+---
+title: "SDS 348 Project 1"
+author: "Shazia Gupta"
+date: "3/12/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+*Introduction: For this project, one of the datasets I chose is "ugss" from the VGAMdata package, which resulted from undergraduate students statistics from a lifestyle questionnaire that asked about age, gender, sex, sleeping habits, eating habits, recreational activities and much more. The data set has 804 observations and 29 different variables. The second dataset I chose is "survey" from the MASS package, which contains the results of another undergraduate student questionnaire from the University of Adelaide which asked them about variables such sex, age, smoking habits, exercizing habits and pulse rate. This data set has 237 observations and 12 different variables. I'm interested to see if there's any relation between smoking/other recreational habits and pulse rate across different genders and ages of undergraduate students, as well as how much sleeping habits and physical stature of students affects day-to-day behaviors of students. I expect pulse rate to be increased for those students who tend to smoke and drink more excessively than others, but curious to see how exercise can mitigate the negative consequences of those activities. As a senior premedical student myself, I wonder if this will shed any light onto how college students can best maintain body health while also enjoying their undergraduate experience.*
+
+```{r}
+#Data Sets
+library(ggplot2)
+library(tidyr)
+library(tidyverse)
+library(dplyr)
+library("MASS")
+library("VGAMdata")
+```
+
+*Tidying: For the tidying portion of this experiment, I used the pivot_wider function to separate the genders, female and male, into separate columns according to their smoking level: heavy, regularly, occasionally or never. The data set was already tidy to begin with. In order to join the data sets in the next step of the project, I used the tolower function to change the name of the Sex variable to match the variable in the ugss dataset, since both the "ugss"" and "survey"" data sets contain sex as a variable.*
+```{R}
+#Tidying
+surveynew <- survey %>% mutate(Sex=tolower(Sex))
+finaldata <- surveynew %>% pivot_wider(names_from = "Sex", values_from = "Smoke")
+surveynew2 <- finaldata %>% pivot_longer(c("female", "male"), names_to = "Sex", values_to = "Smoke")
+
+```
+
+*Joining: In order to join the two datasets, I used the full_join function and renamed the set as 'finaldata', which contains 2516 observations fo 39 variables. By doing this, I retain all the data that matches between 'ugss' and 'survey', and I took out the NA values from those that did not match using the select function. No cases were dropped, but one variable was dropped after joining. I chose to do full_join because all original data from these datasets is maintained and can be used for a wider variety of visualizing purposes later down the line.*
+```{R}
+#Joining
+finaldata <- full_join(surveynew2, ugss, by=c("Age" = "age", "Sex" = "sex"))
+finaldata <- finaldata %>% dplyr::select(-'NA')
+```
+
+*Wrangling: First, I used the filter function to select only the individuals that clapped with their right hand on top, which resulted in 1,458 rows of data with 39 columns. I then used the arrange function to organize the data by ascending pulse rate in beats per minute, and found that 64bpm is the most common pulse rate amongst these students. Next, I used slice to select only the first five rows of data, which gave me a "snapshot" of the joined datasets. Using the dplyr select function allowed me to select only columns 5 and 6 from the data, which contain the Pulse and Clap information per student. I created a new variable called writpul using the mutate function, which divides the span of the students' writing hand by his/her pulse rate, and created a new column, totalling it to 40 columns. Next, I used the summarize_all function with n_distinct to count the number of unique occurences in the columns to better summarize the data. I also used group_by to group the data by exercise levels (frequently, some, none) and summarized it by the mean pulse to display the mean pulse rate in each exercise level. Finally, I used group_by to group by sex and summarized by the mean pulse rate and other generated statistics (mean, standard deviation, variance, minimum, maximum) for both females and males. This table had two rows, one for each sex, and 12 columns total.*
+```{r}
+#Wrangling
+finaldata %>% filter(Clap=="Right")
+finaldata %>% arrange(Pulse)
+finaldata %>% slice(1:5)
+finaldata %>% dplyr::select(5,6)
+finaldata %>% mutate(writpul=Wr.Hnd/Pulse)
+finaldata %>% summarize_all(n_distinct)
+finaldata %>% group_by(Exer) %>% summarize(meanpul=mean(Pulse, na.rm = T))
+finaldata %>% group_by(Sex) %>% summarize(meanpul=mean(Pulse, na.rm = T), sdpul=sd(Pulse, na.rm = T), varpul=var(Pulse, na.rm = T), meanwr=mean(Wr.Hnd, na.rm = T), sdwr=sd(Wr.Hnd, na.rm = T), varwr=var(Wr.Hnd, na.rm = T), meanAge=mean(Age, na.rm = T), sdAge=sd(Age, na.rm = T), varAge=var(Age, na.rm = T), minAge=min(Age, na.rm = T), maxAge=max(Age, na.rm = T))
+
+#make cor!!
+```
+
+*Visualizing: For the first plot, I created a barplot to display the pulse rate in bpm versus the age of the participants according to how much each participant exercises in their day to day life. There seemed to be a few outliers, one of them being a senior in his/her 70's who exercises frequently and has a pulse rate of around 70 bpm. Most of the students' age was around 20 years old and had pulse rates clustered in the 60-80bpm range. Those students who exercise more frequently had a pulse rate closer to 70, while those who rarely or do not exercise had pulse rates nearing 90-100bpm. A healthy pulse for a college student, according to the Mayo Clinic, is around 70bpm, but the lower the pulse does not necessarily mean the healthier the individual. From this plot, I can see that pulse is somewhat dependent on the frequency of exercise; the more one exercises, the more his/her pulse rate stays in the "healthy" range deemed for college students.*
+*For the second plot, I plotted the frequency of smoking by age group in both males and females in order to observe which age groups in each sex tended to smoke the most. By looking at the plot, I can see that none of the females in the study smoked regardless of their age, but the males had a different distribution. There are more male participants who never smoked (specifically from the ages of 19-21 years) than those who did occasionally and regularly, and those who did smoke were under the age of 21. Separating the data by sex helps me understand how smoking behavior differs for females and males, and points out which age groups could potentially have future health problems due to these habits.*
+```{r}
+#Visualizing
+ggplot(finaldata, aes(x=Pulse, y=Age, fill=Exer)) + geom_bar(alpha=0.77, stat="summary", fun.y="mean", position="dodge") + ggtitle("Pulse Rate vs. Age According to Frequency of Exercise")+ geom_errorbar(stat="summary", position="dodge", width=0.8) + scale_fill_hue() + xlab("Pulse Rate (bpm)") + ylab("Age (yrs)") + theme_minimal() + theme(legend.position=c(.9,.7), axis.text.x = element_text(angle = 45, hjust = 1)) + scale_x_continuous(breaks=seq(0,150,5)) + scale_y_continuous(breaks=seq(0,80,10)) + scale_fill_brewer()
+
+smokefreq <- ggplot(na.omit(finaldata)) + geom_point(mapping = aes(x=Age, y=Smoke, size=3, alpha=0.65, na.rm=TRUE), color="lightblue") + facet_wrap(~Sex) + theme(legend.position="none") + ylab("Smoking Frequency") + xlab("Age (yrs)") + xlim(16,23.5) + coord_flip() + scale_x_continuous(breaks = seq(16,23.5,1))
+smokefreq+ggtitle("Smoking Frequency vs. Age in each Sex")
+
+```
+
+*Dimentionality Reduction: For the last part of the project, I used PCA in order to reduce a large set of variables to a smaller one that still contained all relevant information, and to find where the highest variance is. I had two principal components, which accounted for about 0.28 of the total variance, seen in the scatterplot below.The last plot compares PC1, which had the most variance, and PC2, which had the next greatest amount of variance, against each other in the form of vectors. I only had two principle components because there were only two original variables. Through these different arrows, I can see how different variables are correlated. For example, pulse and height are positively correlated, so as height increases amongst the students, so does their pulse rate. On the otherhand, as NW.Hnd decreases, so does study. The variables height, NW.Hnd and W.Hnd all fall along very similar vectors, so they would have similar correlation to each other and in relation to age, study, sleep and pulse. Double checking this with the plots from the Visualization steps, these results make sense to me. From this last graph I can also see that PC2 and PC1 are not directly related, the increase or decrease of PC2 does not affect that of PC1.*
+```{r}
+#Dimentionality Reduction
+finaldata2 <- finaldata %>% dplyr::select(-glasses,-tattoos,-pierced,-piercings)
+finaldata_new <- finaldata2 %>% select_if(is.numeric) %>% scale
+rownames(finaldata_new) <- finaldata$Exer
+finaldata_PCA <- princomp(na.omit(finaldata_new), cor = TRUE, scores = TRUE)
+glimpse(finaldata_PCA)
+summary(finaldata_PCA, loadings = T)
+
+eig1 <- finaldata_PCA$sdev^2
+propvariance=round(eig1/sum(eig1),2)
+
+ggplot() + geom_bar(aes(y=propvariance, x=1:17), stat = "identity", width = 0.85) + ylab("Proportion of Variance") + xlab("Percent") + geom_path(aes(y=propvariance, x=1:17), width=1.5) + geom_text(aes(x=1:17, y=propvariance, label=round(propvariance, 2)),vjust=1, col="lightgreen", size=3) + scale_y_continuous(breaks = seq(0,0.6,0.3), labels = scales::percent) + scale_x_continuous(breaks = 1:10) + geom_point(alpha=0.3)
+
+round(cumsum(eig1)/sum(eig1),2)
+glimpse(eig1)
+ggplot() + geom_point(aes(finaldata_PCA$scores[,1], finaldata_PCA$scores[,2]), color="purple", size=1) + ylab("PC2") + xlab("PC1") + scale_y_continuous(breaks = seq(-3,6,1)) + scale_x_continuous(breaks = seq(-4,5,1))
+
+finaldata_PCA$loadings[1:7, 1:2] %>% as.data.frame %>% rownames_to_column %>% ggplot() + geom_vline(aes(xintercept=0), lty=2)+ geom_hline(aes(yintercept=0), lty=2) + xlab("Principal Component 1") + ylab("Principal Component 2") + geom_segment(aes(y=0, x=0, xend=Comp.1, yend=Comp.2), col="darkgreen", arrow=arrow(), width=1.5) + geom_label(aes(x=Comp.1*1.1, y=Comp.2*1.1, label=rowname))
+```
+
+```{R}

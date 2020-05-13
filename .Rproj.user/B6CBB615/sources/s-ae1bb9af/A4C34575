@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1589315065637.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "A4C34575",
+    "lastKnownWriteTime" : 1589407729,
+    "last_content_update" : 1589407812096,
+    "path" : "~/projects/project 3/Website/lab instruction code.R",
+    "project_path" : "lab instruction code.R",
+    "properties" : {
+        "cursorPosition" : "7,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

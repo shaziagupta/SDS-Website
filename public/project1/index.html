@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Shazia Gupta" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
+    <title>SDS 348 Project 1</title>
+    <meta name="generator" content="Hugo 0.70.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../blog/">BLOG</a></li>
+        
+        <li><a href="../projects/">PROJECTS</a></li>
+        
+        <li><a href="../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../project1/">SDS 348 Project 1</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<p><em>Introduction: For this project, one of the datasets I chose is “ugss” from the VGAMdata package, which resulted from undergraduate students statistics from a lifestyle questionnaire that asked about age, gender, sex, sleeping habits, eating habits, recreational activities and much more. The data set has 804 observations and 29 different variables. The second dataset I chose is “survey” from the MASS package, which contains the results of another undergraduate student questionnaire from the University of Adelaide which asked them about variables such sex, age, smoking habits, exercizing habits and pulse rate. This data set has 237 observations and 12 different variables. I’m interested to see if there’s any relation between smoking/other recreational habits and pulse rate across different genders and ages of undergraduate students, as well as how much sleeping habits and physical stature of students affects day-to-day behaviors of students. I expect pulse rate to be increased for those students who tend to smoke and drink more excessively than others, but curious to see how exercise can mitigate the negative consequences of those activities. As a senior premedical student myself, I wonder if this will shed any light onto how college students can best maintain body health while also enjoying their undergraduate experience.</em></p>
+<pre class="r"><code>#Data Sets
+library(ggplot2)
+library(tidyr)
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
+## ✔ readr   1.3.1     ✔ stringr 1.4.0
+## ✔ purrr   0.3.3     ✔ forcats 0.4.0</code></pre>
+<pre><code>## ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(dplyr)
+library(&quot;MASS&quot;)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;MASS&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     select</code></pre>
+<pre class="r"><code>library(&quot;VGAMdata&quot;)</code></pre>
+<p><em>Tidying: For the tidying portion of this experiment, I used the pivot_wider function to separate the genders, female and male, into separate columns according to their smoking level: heavy, regularly, occasionally or never. The data set was already tidy to begin with. In order to join the data sets in the next step of the project, I used the tolower function to change the name of the Sex variable to match the variable in the ugss dataset, since both the “ugss”&quot; and “survey”&quot; data sets contain sex as a variable.</em></p>
+<pre class="r"><code>#Tidying
+surveynew &lt;- survey %&gt;% mutate(Sex=tolower(Sex))
+finaldata &lt;- surveynew %&gt;% pivot_wider(names_from = &quot;Sex&quot;, values_from = &quot;Smoke&quot;)
+surveynew2 &lt;- finaldata %&gt;% pivot_longer(c(&quot;female&quot;, &quot;male&quot;), names_to = &quot;Sex&quot;, values_to = &quot;Smoke&quot;)</code></pre>
+<p><em>Joining: In order to join the two datasets, I used the full_join function and renamed the set as ‘finaldata’, which contains 2516 observations fo 39 variables. By doing this, I retain all the data that matches between ‘ugss’ and ‘survey’, and I took out the NA values from those that did not match using the select function. No cases were dropped, but one variable was dropped after joining. I chose to do full_join because all original data from these datasets is maintained and can be used for a wider variety of visualizing purposes later down the line.</em></p>
+<pre class="r"><code>#Joining
+finaldata &lt;- full_join(surveynew2, ugss, by=c(&quot;Age&quot; = &quot;age&quot;, &quot;Sex&quot; = &quot;sex&quot;))</code></pre>
+<pre><code>## Warning: Column `Sex`/`sex` joining character vector and factor, coercing into
+## character vector</code></pre>
+<pre class="r"><code>finaldata &lt;- finaldata %&gt;% dplyr::select(-&#39;NA&#39;)</code></pre>
+<p><em>Wrangling: First, I used the filter function to select only the individuals that clapped with their right hand on top, which resulted in 1,458 rows of data with 39 columns. I then used the arrange function to organize the data by ascending pulse rate in beats per minute, and found that 64bpm is the most common pulse rate amongst these students. Next, I used slice to select only the first five rows of data, which gave me a “snapshot” of the joined datasets. Using the dplyr select function allowed me to select only columns 5 and 6 from the data, which contain the Pulse and Clap information per student. I created a new variable called writpul using the mutate function, which divides the span of the students’ writing hand by his/her pulse rate, and created a new column, totalling it to 40 columns. Next, I used the summarize_all function with n_distinct to count the number of unique occurences in the columns to better summarize the data. I also used group_by to group the data by exercise levels (frequently, some, none) and summarized it by the mean pulse to display the mean pulse rate in each exercise level. Finally, I used group_by to group by sex and summarized by the mean pulse rate and other generated statistics (mean, standard deviation, variance, minimum, maximum) for both females and males. This table had two rows, one for each sex, and 12 columns total.</em></p>
+<pre class="r"><code>#Wrangling
+finaldata %&gt;% filter(Clap==&quot;Right&quot;)</code></pre>
+<pre><code>## # A tibble: 1,458 x 39
+##    Wr.Hnd NW.Hnd W.Hnd Fold  Pulse Clap  Exer  Height M.I     Age Sex   Smoke
+##     &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;fct&gt; &lt;int&gt; &lt;fct&gt; &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;chr&gt; &lt;fct&gt;
+##  1     20   20   Right Neit…    35 Right Some    165  Metr…  23.7 fema… &lt;NA&gt; 
+##  2     20   20   Right Neit…    35 Right Some    165  Metr…  23.7 male  Never
+##  3     18   17.7 Right L on…    64 Right Some    173. Impe…  21   fema… Never
+##  4     18   17.7 Right L on…    64 Right Some    173. Impe…  21   fema… Never
+##  5     18   17.7 Right L on…    64 Right Some    173. Impe…  21   fema… Never
+##  6     18   17.7 Right L on…    64 Right Some    173. Impe…  21   fema… Never
+##  7     18   17.7 Right L on…    64 Right Some    173. Impe…  21   fema… Never
+##  8     18   17.7 Right L on…    64 Right Some    173. Impe…  21   fema… Never
+##  9     18   17.7 Right L on…    64 Right Some    173. Impe…  21   fema… Never
+## 10     18   17.7 Right L on…    64 Right Some    173. Impe…  21   fema… Never
+## # … with 1,448 more rows, and 27 more variables: eyes &lt;fct&gt;, piercings &lt;int&gt;,
+## #   pierced &lt;fct&gt;, tattoos &lt;int&gt;, tattooed &lt;fct&gt;, glasses &lt;fct&gt;, sleep &lt;int&gt;,
+## #   study &lt;int&gt;, tv &lt;int&gt;, movies &lt;int&gt;, movies3m &lt;fct&gt;, sport &lt;fct&gt;,
+## #   entertainment &lt;fct&gt;, fruit &lt;fct&gt;, income &lt;dbl&gt;, rent &lt;dbl&gt;, clothes &lt;dbl&gt;,
+## #   hair &lt;dbl&gt;, tobacco &lt;int&gt;, smokes &lt;fct&gt;, alcohol &lt;dbl&gt;, buy.alcohol &lt;fct&gt;,
+## #   sendtxt &lt;int&gt;, receivetxt &lt;int&gt;, txts &lt;fct&gt;, country &lt;fct&gt;, status &lt;fct&gt;</code></pre>
+<pre class="r"><code>finaldata %&gt;% arrange(Pulse)</code></pre>
+<pre><code>## # A tibble: 2,516 x 39
+##    Wr.Hnd NW.Hnd W.Hnd Fold  Pulse Clap  Exer  Height M.I     Age Sex   Smoke
+##     &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;fct&gt; &lt;int&gt; &lt;fct&gt; &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;chr&gt; &lt;fct&gt;
+##  1   20     20   Right Neit…    35 Right Some    165  Metr…  23.7 fema… &lt;NA&gt; 
+##  2   20     20   Right Neit…    35 Right Some    165  Metr…  23.7 male  Never
+##  3   16.5   17   Right L on…    40 Left  Freq    168. Impe…  17.4 fema… Never
+##  4   16.5   17   Right L on…    40 Left  Freq    168. Impe…  17.4 male  &lt;NA&gt; 
+##  5   18     17.5 Right R on…    48 Neit… Freq    165  Metr…  18.7 fema… Never
+##  6   18     17.5 Right R on…    48 Neit… Freq    165  Metr…  18.7 male  &lt;NA&gt; 
+##  7   21     21   Right L on…    48 Neit… Freq    174  Metr…  21.3 fema… &lt;NA&gt; 
+##  8   21     21   Right L on…    48 Neit… Freq    174  Metr…  21.3 male  Never
+##  9   18     17.9 Right R on…    50 Left  None    165  Metr…  30.8 fema… Never
+## 10   18     17.9 Right R on…    50 Left  None    165  Metr…  30.8 male  &lt;NA&gt; 
+## # … with 2,506 more rows, and 27 more variables: eyes &lt;fct&gt;, piercings &lt;int&gt;,
+## #   pierced &lt;fct&gt;, tattoos &lt;int&gt;, tattooed &lt;fct&gt;, glasses &lt;fct&gt;, sleep &lt;int&gt;,
+## #   study &lt;int&gt;, tv &lt;int&gt;, movies &lt;int&gt;, movies3m &lt;fct&gt;, sport &lt;fct&gt;,
+## #   entertainment &lt;fct&gt;, fruit &lt;fct&gt;, income &lt;dbl&gt;, rent &lt;dbl&gt;, clothes &lt;dbl&gt;,
+## #   hair &lt;dbl&gt;, tobacco &lt;int&gt;, smokes &lt;fct&gt;, alcohol &lt;dbl&gt;, buy.alcohol &lt;fct&gt;,
+## #   sendtxt &lt;int&gt;, receivetxt &lt;int&gt;, txts &lt;fct&gt;, country &lt;fct&gt;, status &lt;fct&gt;</code></pre>
+<pre class="r"><code>finaldata %&gt;% slice(1:5)</code></pre>
+<pre><code>## # A tibble: 5 x 39
+##   Wr.Hnd NW.Hnd W.Hnd Fold  Pulse Clap  Exer  Height M.I     Age Sex   Smoke
+##    &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;fct&gt; &lt;int&gt; &lt;fct&gt; &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;chr&gt; &lt;fct&gt;
+## 1   18.5   18   Right R on…    92 Left  Some    173  Metr…  18.2 fema… Never
+## 2   18.5   18   Right R on…    92 Left  Some    173  Metr…  18.2 male  &lt;NA&gt; 
+## 3   19.5   20.5 Left  R on…   104 Left  None    178. Impe…  17.6 fema… &lt;NA&gt; 
+## 4   19.5   20.5 Left  R on…   104 Left  None    178. Impe…  17.6 male  Regul
+## 5   18     13.3 Right L on…    87 Neit… None     NA  &lt;NA&gt;   16.9 fema… &lt;NA&gt; 
+## # … with 27 more variables: eyes &lt;fct&gt;, piercings &lt;int&gt;, pierced &lt;fct&gt;,
+## #   tattoos &lt;int&gt;, tattooed &lt;fct&gt;, glasses &lt;fct&gt;, sleep &lt;int&gt;, study &lt;int&gt;,
+## #   tv &lt;int&gt;, movies &lt;int&gt;, movies3m &lt;fct&gt;, sport &lt;fct&gt;, entertainment &lt;fct&gt;,
+## #   fruit &lt;fct&gt;, income &lt;dbl&gt;, rent &lt;dbl&gt;, clothes &lt;dbl&gt;, hair &lt;dbl&gt;,
+## #   tobacco &lt;int&gt;, smokes &lt;fct&gt;, alcohol &lt;dbl&gt;, buy.alcohol &lt;fct&gt;,
+## #   sendtxt &lt;int&gt;, receivetxt &lt;int&gt;, txts &lt;fct&gt;, country &lt;fct&gt;, status &lt;fct&gt;</code></pre>
+<pre class="r"><code>finaldata %&gt;% dplyr::select(5,6)</code></pre>
+<pre><code>## # A tibble: 2,516 x 2
+##    Pulse Clap   
+##    &lt;int&gt; &lt;fct&gt;  
+##  1    92 Left   
+##  2    92 Left   
+##  3   104 Left   
+##  4   104 Left   
+##  5    87 Neither
+##  6    87 Neither
+##  7    NA Neither
+##  8    NA Neither
+##  9    35 Right  
+## 10    35 Right  
+## # … with 2,506 more rows</code></pre>
+<pre class="r"><code>finaldata %&gt;% mutate(writpul=Wr.Hnd/Pulse)</code></pre>
+<pre><code>## # A tibble: 2,516 x 40
+##    Wr.Hnd NW.Hnd W.Hnd Fold  Pulse Clap  Exer  Height M.I     Age Sex   Smoke
+##     &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;fct&gt; &lt;int&gt; &lt;fct&gt; &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;chr&gt; &lt;fct&gt;
+##  1   18.5   18   Right R on…    92 Left  Some    173  Metr…  18.2 fema… Never
+##  2   18.5   18   Right R on…    92 Left  Some    173  Metr…  18.2 male  &lt;NA&gt; 
+##  3   19.5   20.5 Left  R on…   104 Left  None    178. Impe…  17.6 fema… &lt;NA&gt; 
+##  4   19.5   20.5 Left  R on…   104 Left  None    178. Impe…  17.6 male  Regul
+##  5   18     13.3 Right L on…    87 Neit… None     NA  &lt;NA&gt;   16.9 fema… &lt;NA&gt; 
+##  6   18     13.3 Right L on…    87 Neit… None     NA  &lt;NA&gt;   16.9 male  Occas
+##  7   18.8   18.9 Right R on…    NA Neit… None    160  Metr…  20.3 fema… &lt;NA&gt; 
+##  8   18.8   18.9 Right R on…    NA Neit… None    160  Metr…  20.3 male  Never
+##  9   20     20   Right Neit…    35 Right Some    165  Metr…  23.7 fema… &lt;NA&gt; 
+## 10   20     20   Right Neit…    35 Right Some    165  Metr…  23.7 male  Never
+## # … with 2,506 more rows, and 28 more variables: eyes &lt;fct&gt;, piercings &lt;int&gt;,
+## #   pierced &lt;fct&gt;, tattoos &lt;int&gt;, tattooed &lt;fct&gt;, glasses &lt;fct&gt;, sleep &lt;int&gt;,
+## #   study &lt;int&gt;, tv &lt;int&gt;, movies &lt;int&gt;, movies3m &lt;fct&gt;, sport &lt;fct&gt;,
+## #   entertainment &lt;fct&gt;, fruit &lt;fct&gt;, income &lt;dbl&gt;, rent &lt;dbl&gt;, clothes &lt;dbl&gt;,
+## #   hair &lt;dbl&gt;, tobacco &lt;int&gt;, smokes &lt;fct&gt;, alcohol &lt;dbl&gt;, buy.alcohol &lt;fct&gt;,
+## #   sendtxt &lt;int&gt;, receivetxt &lt;int&gt;, txts &lt;fct&gt;, country &lt;fct&gt;, status &lt;fct&gt;,
+## #   writpul &lt;dbl&gt;</code></pre>
+<pre class="r"><code>finaldata %&gt;% summarize_all(n_distinct)</code></pre>
+<pre><code>## # A tibble: 1 x 39
+##   Wr.Hnd NW.Hnd W.Hnd  Fold Pulse  Clap  Exer Height   M.I   Age   Sex Smoke
+##    &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1     61     69     3     4    44     4     4     68     3   109     2     5
+## # … with 27 more variables: eyes &lt;int&gt;, piercings &lt;int&gt;, pierced &lt;int&gt;,
+## #   tattoos &lt;int&gt;, tattooed &lt;int&gt;, glasses &lt;int&gt;, sleep &lt;int&gt;, study &lt;int&gt;,
+## #   tv &lt;int&gt;, movies &lt;int&gt;, movies3m &lt;int&gt;, sport &lt;int&gt;, entertainment &lt;int&gt;,
+## #   fruit &lt;int&gt;, income &lt;int&gt;, rent &lt;int&gt;, clothes &lt;int&gt;, hair &lt;int&gt;,
+## #   tobacco &lt;int&gt;, smokes &lt;int&gt;, alcohol &lt;int&gt;, buy.alcohol &lt;int&gt;,
+## #   sendtxt &lt;int&gt;, receivetxt &lt;int&gt;, txts &lt;int&gt;, country &lt;int&gt;, status &lt;int&gt;</code></pre>
+<pre class="r"><code>finaldata %&gt;% group_by(Exer) %&gt;% summarize(meanpul=mean(Pulse, na.rm = T))</code></pre>
+<pre><code>## Warning: Factor `Exer` contains implicit NA, consider using
+## `forcats::fct_explicit_na`</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   Exer  meanpul
+##   &lt;fct&gt;   &lt;dbl&gt;
+## 1 Freq     75.5
+## 2 None     76.8
+## 3 Some     76.8
+## 4 &lt;NA&gt;    NaN</code></pre>
+<pre class="r"><code>finaldata %&gt;% group_by(Sex) %&gt;% summarize(meanpul=mean(Pulse, na.rm = T), sdpul=sd(Pulse, na.rm = T), varpul=var(Pulse, na.rm = T), meanwr=mean(Wr.Hnd, na.rm = T), sdwr=sd(Wr.Hnd, na.rm = T), varwr=var(Wr.Hnd, na.rm = T), meanAge=mean(Age, na.rm = T), sdAge=sd(Age, na.rm = T), varAge=var(Age, na.rm = T), minAge=min(Age, na.rm = T), maxAge=max(Age, na.rm = T))</code></pre>
+<pre><code>## # A tibble: 2 x 12
+##   Sex   meanpul sdpul varpul meanwr  sdwr varwr meanAge sdAge varAge minAge
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 fema…    76.4  11.7   138.   19.4  2.09  4.36    20.2  3.51   12.3   16.8
+## 2 male     75.8  11.5   132.   19.2  2.04  4.16    20.1  3.97   15.7   16.8
+## # … with 1 more variable: maxAge &lt;dbl&gt;</code></pre>
+<pre class="r"><code>#make cor!!</code></pre>
+<p><em>Visualizing: For the first plot, I created a barplot to display the pulse rate in bpm versus the age of the participants according to how much each participant exercises in their day to day life. There seemed to be a few outliers, one of them being a senior in his/her 70’s who exercises frequently and has a pulse rate of around 70 bpm. Most of the students’ age was around 20 years old and had pulse rates clustered in the 60-80bpm range. Those students who exercise more frequently had a pulse rate closer to 70, while those who rarely or do not exercise had pulse rates nearing 90-100bpm. A healthy pulse for a college student, according to the Mayo Clinic, is around 70bpm, but the lower the pulse does not necessarily mean the healthier the individual. From this plot, I can see that pulse is somewhat dependent on the frequency of exercise; the more one exercises, the more his/her pulse rate stays in the “healthy” range deemed for college students.</em> <em>For the second plot, I plotted the frequency of smoking by age group in both males and females in order to observe which age groups in each sex tended to smoke the most. By looking at the plot, I can see that none of the females in the study smoked regardless of their age, but the males had a different distribution. There are more male participants who never smoked (specifically from the ages of 19-21 years) than those who did occasionally and regularly, and those who did smoke were under the age of 21. Separating the data by sex helps me understand how smoking behavior differs for females and males, and points out which age groups could potentially have future health problems due to these habits.</em></p>
+<pre class="r"><code>#Visualizing
+ggplot(finaldata, aes(x=Pulse, y=Age, fill=Exer)) + geom_bar(alpha=0.77, stat=&quot;summary&quot;, fun.y=&quot;mean&quot;, position=&quot;dodge&quot;) + ggtitle(&quot;Pulse Rate vs. Age According to Frequency of Exercise&quot;)+ geom_errorbar(stat=&quot;summary&quot;, position=&quot;dodge&quot;, width=0.8) + scale_fill_hue() + xlab(&quot;Pulse Rate (bpm)&quot;) + ylab(&quot;Age (yrs)&quot;) + theme_minimal() + theme(legend.position=c(.9,.7), axis.text.x = element_text(angle = 45, hjust = 1)) + scale_x_continuous(breaks=seq(0,150,5)) + scale_y_continuous(breaks=seq(0,80,10)) + scale_fill_brewer()</code></pre>
+<pre><code>## Scale for &#39;fill&#39; is already present. Adding another scale for &#39;fill&#39;, which
+## will replace the existing scale.</code></pre>
+<pre><code>## Warning: Removed 570 rows containing non-finite values (stat_summary).
+
+## Warning: Removed 570 rows containing non-finite values (stat_summary).</code></pre>
+<pre><code>## No summary function supplied, defaulting to `mean_se()</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>smokefreq &lt;- ggplot(na.omit(finaldata)) + geom_point(mapping = aes(x=Age, y=Smoke, size=3, alpha=0.65, na.rm=TRUE), color=&quot;lightblue&quot;) + facet_wrap(~Sex) + theme(legend.position=&quot;none&quot;) + ylab(&quot;Smoking Frequency&quot;) + xlab(&quot;Age (yrs)&quot;) + xlim(16,23.5) + coord_flip() + scale_x_continuous(breaks = seq(16,23.5,1))</code></pre>
+<pre><code>## Warning: Ignoring unknown aesthetics: na.rm</code></pre>
+<pre><code>## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will
+## replace the existing scale.</code></pre>
+<pre class="r"><code>smokefreq+ggtitle(&quot;Smoking Frequency vs. Age in each Sex&quot;)</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<p><em>Dimentionality Reduction: For the last part of the project, I used PCA in order to reduce a large set of variables to a smaller one that still contained all relevant information, and to find where the highest variance is. I had two principal components, which accounted for about 0.28 of the total variance, seen in the scatterplot below.The last plot compares PC1, which had the most variance, and PC2, which had the next greatest amount of variance, against each other in the form of vectors. I only had two principle components because there were only two original variables. Through these different arrows, I can see how different variables are correlated. For example, pulse and height are positively correlated, so as height increases amongst the students, so does their pulse rate. On the otherhand, as NW.Hnd decreases, so does study. The variables height, NW.Hnd and W.Hnd all fall along very similar vectors, so they would have similar correlation to each other and in relation to age, study, sleep and pulse. Double checking this with the plots from the Visualization steps, these results make sense to me. From this last graph I can also see that PC2 and PC1 are not directly related, the increase or decrease of PC2 does not affect that of PC1.</em></p>
+<pre class="r"><code>#Dimentionality Reduction
+finaldata2 &lt;- finaldata %&gt;% dplyr::select(-glasses,-tattoos,-pierced,-piercings)
+finaldata_new &lt;- finaldata2 %&gt;% select_if(is.numeric) %&gt;% scale
+rownames(finaldata_new) &lt;- finaldata$Exer
+finaldata_PCA &lt;- princomp(na.omit(finaldata_new), cor = TRUE, scores = TRUE)
+glimpse(finaldata_PCA)</code></pre>
+<pre><code>## List of 7
+##  $ sdev    : Named num [1:17] 1.62 1.46 1.27 1.17 1.06 ...
+##   ..- attr(*, &quot;names&quot;)= chr [1:17] &quot;Comp.1&quot; &quot;Comp.2&quot; &quot;Comp.3&quot; &quot;Comp.4&quot; ...
+##  $ loadings: loadings [1:17, 1:17] -0.59625 -0.59584 -0.00793 -0.52644 -0.07033 ...
+##   ..- attr(*, &quot;dimnames&quot;)=List of 2
+##   .. ..$ : chr [1:17] &quot;Wr.Hnd&quot; &quot;NW.Hnd&quot; &quot;Pulse&quot; &quot;Height&quot; ...
+##   .. ..$ : chr [1:17] &quot;Comp.1&quot; &quot;Comp.2&quot; &quot;Comp.3&quot; &quot;Comp.4&quot; ...
+##  $ center  : Named num [1:17] 0.3047 0.2554 0.0386 0.1768 -0.1283 ...
+##   ..- attr(*, &quot;names&quot;)= chr [1:17] &quot;Wr.Hnd&quot; &quot;NW.Hnd&quot; &quot;Pulse&quot; &quot;Height&quot; ...
+##  $ scale   : Named num [1:17] 0.89 0.926 0.994 0.958 0.28 ...
+##   ..- attr(*, &quot;names&quot;)= chr [1:17] &quot;Wr.Hnd&quot; &quot;NW.Hnd&quot; &quot;Pulse&quot; &quot;Height&quot; ...
+##  $ n.obs   : int 1587
+##  $ scores  : num [1:1587, 1:17] 1.48 1.54 1.4 1.39 1.54 ...
+##   ..- attr(*, &quot;dimnames&quot;)=List of 2
+##   .. ..$ : chr [1:1587] &quot;Some&quot; &quot;Some&quot; &quot;Some&quot; &quot;Some&quot; ...
+##   .. ..$ : chr [1:17] &quot;Comp.1&quot; &quot;Comp.2&quot; &quot;Comp.3&quot; &quot;Comp.4&quot; ...
+##  $ call    : language princomp(x = na.omit(finaldata_new), cor = TRUE, scores = TRUE)
+##  - attr(*, &quot;class&quot;)= chr &quot;princomp&quot;</code></pre>
+<pre class="r"><code>summary(finaldata_PCA, loadings = T)</code></pre>
+<pre><code>## Importance of components:
+##                           Comp.1    Comp.2     Comp.3     Comp.4     Comp.5
+## Standard deviation     1.6216871 1.4565938 1.27009403 1.17387146 1.06026305
+## Proportion of Variance 0.1546982 0.1248038 0.09489052 0.08105731 0.06612693
+## Cumulative Proportion  0.1546982 0.2795020 0.37439254 0.45544984 0.52157677
+##                            Comp.6     Comp.7     Comp.8     Comp.9    Comp.10
+## Standard deviation     1.03973830 1.03112390 0.98939090 0.97756271 0.94979351
+## Proportion of Variance 0.06359151 0.06254215 0.05758202 0.05621346 0.05306516
+## Cumulative Proportion  0.58516828 0.64771043 0.70529245 0.76150591 0.81457107
+##                           Comp.11    Comp.12    Comp.13    Comp.14    Comp.15
+## Standard deviation     0.89981095 0.84614955 0.81613827 0.74414134 0.59477895
+## Proportion of Variance 0.04762704 0.04211583 0.03918128 0.03257331 0.02080953
+## Cumulative Proportion  0.86219812 0.90431394 0.94349522 0.97606853 0.99687806
+##                            Comp.16      Comp.17
+## Standard deviation     0.208164533 0.0986939367
+## Proportion of Variance 0.002548969 0.0005729702
+## Cumulative Proportion  0.999427030 1.0000000000
+## 
+## Loadings:
+##            Comp.1 Comp.2 Comp.3 Comp.4 Comp.5 Comp.6 Comp.7 Comp.8 Comp.9
+## Wr.Hnd     -0.596                                                        
+## NW.Hnd     -0.596                                                        
+## Pulse              0.127 -0.110 -0.475  0.184  0.344 -0.313        -0.243
+## Height     -0.526                                                        
+## Age               -0.169  0.235  0.476 -0.130 -0.254  0.152              
+## sleep                     0.168 -0.289  0.203  0.185  0.157 -0.260  0.693
+## study             -0.130               -0.424 -0.139 -0.333 -0.728       
+## tv                 0.111  0.157 -0.402        -0.382  0.405 -0.323 -0.170
+## movies             0.181  0.281 -0.167 -0.157         0.181  0.162  0.279
+## income                    0.511        -0.166  0.371  0.183        -0.311
+## rent              -0.144  0.224  0.319  0.207  0.338 -0.232 -0.331  0.251
+## clothes            0.173  0.568        -0.159        -0.148  0.115 -0.154
+## hair                      0.251 -0.113        -0.332 -0.651  0.269  0.171
+## tobacco                   0.169  0.237  0.580               -0.190 -0.340
+## alcohol            0.142  0.202         0.494 -0.488        -0.106       
+## sendtxt            0.637 -0.104  0.213                      -0.108       
+## receivetxt         0.637 -0.122  0.213                      -0.100       
+##            Comp.10 Comp.11 Comp.12 Comp.13 Comp.14 Comp.15 Comp.16 Comp.17
+## Wr.Hnd                                             -0.354           0.712 
+## NW.Hnd                                             -0.383          -0.700 
+## Pulse       0.201   0.141  -0.504   0.309           0.150                 
+## Height                                              0.833                 
+## Age                 0.156  -0.613   0.401                                 
+## sleep      -0.435                   0.214                                 
+## study              -0.175   0.128   0.288                                 
+## tv                         -0.361  -0.466                                 
+## movies      0.668  -0.466           0.157                                 
+## income     -0.166   0.170   0.143   0.121  -0.588                         
+## rent        0.382   0.219  -0.136  -0.479                                 
+## clothes    -0.118           0.141           0.712                         
+## hair       -0.234  -0.188  -0.170  -0.217  -0.333                         
+## tobacco    -0.149  -0.623                                                 
+## alcohol     0.230   0.430   0.334   0.276                                 
+## sendtxt                                                    -0.705         
+## receivetxt                                                  0.708</code></pre>
+<pre class="r"><code>eig1 &lt;- finaldata_PCA$sdev^2
+propvariance=round(eig1/sum(eig1),2)
+
+ggplot() + geom_bar(aes(y=propvariance, x=1:17), stat = &quot;identity&quot;, width = 0.85) + ylab(&quot;Proportion of Variance&quot;) + xlab(&quot;Percent&quot;) + geom_path(aes(y=propvariance, x=1:17), width=1.5) + geom_text(aes(x=1:17, y=propvariance, label=round(propvariance, 2)),vjust=1, col=&quot;lightgreen&quot;, size=3) + scale_y_continuous(breaks = seq(0,0.6,0.3), labels = scales::percent) + scale_x_continuous(breaks = 1:10) + geom_point(alpha=0.3)</code></pre>
+<pre><code>## Warning: Ignoring unknown parameters: width</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>round(cumsum(eig1)/sum(eig1),2)</code></pre>
+<pre><code>##  Comp.1  Comp.2  Comp.3  Comp.4  Comp.5  Comp.6  Comp.7  Comp.8  Comp.9 Comp.10 
+##    0.15    0.28    0.37    0.46    0.52    0.59    0.65    0.71    0.76    0.81 
+## Comp.11 Comp.12 Comp.13 Comp.14 Comp.15 Comp.16 Comp.17 
+##    0.86    0.90    0.94    0.98    1.00    1.00    1.00</code></pre>
+<pre class="r"><code>glimpse(eig1)</code></pre>
+<pre><code>##  Named num [1:17] 2.63 2.12 1.61 1.38 1.12 ...
+##  - attr(*, &quot;names&quot;)= chr [1:17] &quot;Comp.1&quot; &quot;Comp.2&quot; &quot;Comp.3&quot; &quot;Comp.4&quot; ...</code></pre>
+<pre class="r"><code>ggplot() + geom_point(aes(finaldata_PCA$scores[,1], finaldata_PCA$scores[,2]), color=&quot;purple&quot;, size=1) + ylab(&quot;PC2&quot;) + xlab(&quot;PC1&quot;) + scale_y_continuous(breaks = seq(-3,6,1)) + scale_x_continuous(breaks = seq(-4,5,1))</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<pre class="r"><code>finaldata_PCA$loadings[1:7, 1:2] %&gt;% as.data.frame %&gt;% rownames_to_column %&gt;% ggplot() + geom_vline(aes(xintercept=0), lty=2)+ geom_hline(aes(yintercept=0), lty=2) + xlab(&quot;Principal Component 1&quot;) + ylab(&quot;Principal Component 2&quot;) + geom_segment(aes(y=0, x=0, xend=Comp.1, yend=Comp.2), col=&quot;darkgreen&quot;, arrow=arrow(), width=1.5) + geom_label(aes(x=Comp.1*1.1, y=Comp.2*1.1, label=rowname))</code></pre>
+<pre><code>## Warning: Ignoring unknown parameters: width</code></pre>
+<p><img src="../project1_files/figure-html/unnamed-chunk-6-3.png" width="672" /></p>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../js/docs.min.js"></script>
+<script src="../js/main.js"></script>
+
+<script src="../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>
