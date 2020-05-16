@@ -17,7 +17,8 @@
       <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
       
       <guid>/blog/first-blog-post/</guid>
-      <description></description>
+      <description>library(reticulate) Sys.setenv(RETICULATE_PYTHON = &amp;quot;/usr/bin/python&amp;quot;) use_python(&amp;quot;usr/bin/python&amp;quot;)  While taking this class, I learned the basics of using Python, a programming language that can be used to create websites, web applications and general-purpose programming tasks. The language emphasizes the readability of code, and utilizies significant whitespace. Python can also be used via R Studio by using the “reticulate” package.
+One of Python’s basic built-in functions is to create lists. Using this list function, I can figure out the length of a list.</description>
     </item>
     
     <item>
