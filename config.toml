@@ -23,9 +23,9 @@ theme = "hugo-sustain"
   Github        = "shaziagupta"
   Email         = "shaziagupta@utexas.edu"
   Twitter       = "shaziagupta"
-  LinkedIn      = "https://www.linkedin.com/in/shazia-g-b1a717111/"
+  LinkedIn      = "linkedin.com/in/shazia-g-b1a717111/"
   Instagram     = "shaziagupta"
-  Facebook      = "https://www.facebook.com/shazia.gupta.98"
+  Facebook      = "facebook.com/shazia.gupta.98/"
 
 ## Main Menu
 [[menu.main]]
