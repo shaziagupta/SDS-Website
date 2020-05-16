@@ -371,3 +371,31 @@ remote: Resolving deltas:   0% (0/9)[Kremote: Resolving deltas:  11% (1/9)[K
 To https://github.com/shaziagupta/SDS-Website.git
    2d9cd8c..5ab6580  master -> master
 ]0;/stor/home/sjg2729/projects/project 3/Website]0;sjg2729@educcomp01: ~/projects/project 3/Website[01;32msjg2729@educcomp01[00m:[01;34m~/projects/project 3/Website[00m$ git add .
+]0;/stor/home/sjg2729/projects/project 3/Website]0;sjg2729@educcomp01: ~/projects/project 3/Website[01;32msjg2729@educcomp01[00m:[01;34m~/projects/project 3/Website[00m$ gi c[K[Kt commit -m "seventh"
+[master 2c26e6b] seventh
+ Committer: Shazia Gupta <sjg2729@educcomp01.ccbb.utexas.edu>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 4 files changed, 33 insertions(+), 5 deletions(-)
+]0;/stor/home/sjg2729/projects/project 3/Website]0;sjg2729@educcomp01: ~/projects/project 3/Website[01;32msjg2729@educcomp01[00m:[01;34m~/projects/project 3/Website[00m$ git push origin master
+Username for 'https://github.com': shaziagupta
+Password for 'https://shaziagupta@github.com': 
+Counting objects: 12, done.
+Delta compression using up to 16 threads.
+Compressing objects:   8% (1/12)   Compressing objects:  16% (2/12)   Compressing objects:  25% (3/12)   Compressing objects:  33% (4/12)   Compressing objects:  41% (5/12)   Compressing objects:  50% (6/12)   Compressing objects:  58% (7/12)   Compressing objects:  66% (8/12)   Compressing objects:  75% (9/12)   Compressing objects:  83% (10/12)   Compressing objects:  91% (11/12)   Compressing objects: 100% (12/12)   Compressing objects: 100% (12/12), done.
+Writing objects:   8% (1/12)   Writing objects:  16% (2/12)   Writing objects:  25% (3/12)   Writing objects:  33% (4/12)   Writing objects:  41% (5/12)   Writing objects:  50% (6/12)   Writing objects:  58% (7/12)   Writing objects:  66% (8/12)   Writing objects:  75% (9/12)   Writing objects:  83% (10/12)   Writing objects:  91% (11/12)   Writing objects: 100% (12/12)   Writing objects: 100% (12/12), 1.47 KiB | 754.00 KiB/s, done.
+Total 12 (delta 7), reused 0 (delta 0)
+remote: Resolving deltas:   0% (0/7)[Kremote: Resolving deltas:  14% (1/7)[Kremote: Resolving deltas:  28% (2/7)[Kremote: Resolving deltas:  42% (3/7)[Kremote: Resolving deltas:  57% (4/7)[Kremote: Resolving deltas:  71% (5/7)[Kremote: Resolving deltas:  85% (6/7)[Kremote: Resolving deltas: 100% (7/7)[Kremote: Resolving deltas: 100% (7/7), completed with 7 local objects.[K
+To https://github.com/shaziagupta/SDS-Website.git
+   5ab6580..2c26e6b  master -> master
+]0;/stor/home/sjg2729/projects/project 3/Website]0;sjg2729@educcomp01: ~/projects/project 3/Website[01;32msjg2729@educcomp01[00m:[01;34m~/projects/project 3/Website[00m$ git add .
