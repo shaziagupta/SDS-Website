@@ -30,7 +30,7 @@ html, body {
   color: #6b6b6b;
 }
 .navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
-  color: #6b6b6b;
+  color: #3D9FBF;
 }
 .navbar-default .navbar-text {
   color: #6b6b6b;
@@ -151,7 +151,7 @@ html, body {
   transition: all .4s ease;
 }
 .social-links li a:hover {
-  color: #000;
+  color: #3D9FBF;
 }
 .avatar {
   padding-top: 5%;
