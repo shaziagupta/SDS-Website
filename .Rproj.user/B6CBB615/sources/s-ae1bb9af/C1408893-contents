@@ -23,9 +23,9 @@ theme = "hugo-sustain"
   Github        = "shaziagupta"
   Email         = "shaziagupta@utexas.edu"
   Twitter       = "shaziagupta"
-  LinkedIn      = "shaziagupta@gmail.com"
+  LinkedIn      = "https://www.linkedin.com/in/shazia-g-b1a717111/"
   Instagram     = "shaziagupta"
-  Facebook      = "shaziagupta@gmail.com"
+  Facebook      = "shazia.gupta.98"
 
 ## Main Menu
 [[menu.main]]
@@ -42,4 +42,4 @@ theme = "hugo-sustain"
   name = "resume"
   identifier = "resume"
   weight = 300
-  url = "/resume/"
+  url = "resumefinal.pdf"
